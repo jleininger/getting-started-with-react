@@ -1,5 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Greeting from './greeting.jsx';
+import Reader from './components/rssReader.jsx';
 
-render(<Greeting name="World" />, document.body);
+render(<Reader />, document.getElementById('container'));
