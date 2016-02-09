@@ -6,6 +6,12 @@ export default React.createClass({
         twitterUser: React.PropTypes.string    
     },
     
+    getInitialState() {
+        return {
+            feedItems: []    
+        }    
+    },
+    
     componentDidUpdate(prevProps) {
         if(this.props.twitterUser !== prevProps.twitterUser) {
             $.ajax({
@@ -18,10 +24,17 @@ export default React.createClass({
     
     handleNewTwitterFeed(data) {
         var data = $(data);
-        console.log(data);    	        
+        data.find("item").each(function() {
+            var $this = $(this),
+            item = {
+                creator: $this.find("creator").text(),
+                    
+            };
+        });    	        
     },
     
     render() {
+        
         return (
             <div className="feed">
                 <header>{}</header>

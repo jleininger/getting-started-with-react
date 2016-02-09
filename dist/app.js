@@ -19675,9 +19675,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _twitterUserInput = __webpack_require__(160);
+	var _header = __webpack_require__(160);
 
-	var _twitterUserInput2 = _interopRequireDefault(_twitterUserInput);
+	var _header2 = _interopRequireDefault(_header);
 
 	var _feedStream = __webpack_require__(162);
 
@@ -19689,6 +19689,7 @@
 	    displayName: 'rssReader',
 	    getInitialState: function getInitialState() {
 	        return {
+	            appName: 'TwitFeed',
 	            twitterUser: ''
 	        };
 	    },
@@ -19698,9 +19699,17 @@
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            { className: 'rss-reader' },
-	            _react2.default.createElement(_twitterUserInput2.default, { handleInput: this.handleNewTwitterUser }),
-	            _react2.default.createElement(_feedStream2.default, { twitterUser: this.state.twitterUser })
+	            { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-header' },
+	            _react2.default.createElement(_header2.default, { title: this.state.appName, handleInput: this.handleNewTwitterUser }),
+	            _react2.default.createElement(
+	                'main',
+	                { className: 'mdl-layout__content' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'page-content' },
+	                    _react2.default.createElement(_feedStream2.default, { twitterUser: this.state.twitterUser })
+	                )
+	            )
 	        );
 	    }
 	});
@@ -19719,12 +19728,86 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _keyCodes = __webpack_require__(161);
+	var _twitterUserInput = __webpack_require__(161);
+
+	var _twitterUserInput2 = _interopRequireDefault(_twitterUserInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Header = function Header(_ref) {
+	    var title = _ref.title;
+	    var handleInput = _ref.handleInput;
+	    return _react2.default.createElement(
+	        'header',
+	        { className: 'mdl-layout__header' },
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-layout__header-row' },
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'mdl-layout-title' },
+	                title
+	            ),
+	            _react2.default.createElement('div', { className: 'mdl-layout-spacer' }),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
+	                _react2.default.createElement(
+	                    'label',
+	                    { className: 'mdl-button mdl-js-button mdl-button--icon',
+	                        htmlFor: 'fixed-header-drawer-exp' },
+	                    _react2.default.createElement(
+	                        'i',
+	                        { className: 'material-icons' },
+	                        'search'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-textfield__expandable-holder' },
+	                    _react2.default.createElement(_twitterUserInput2.default, { handleInput: handleInput })
+	                )
+	            )
+	        )
+	    );
+	};
+
+	exports.default = Header;
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _keyCodes = __webpack_require__(164);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _react2.default.createClass({
 	    displayName: 'twitterUserInput',
+
+	    propTypes: {
+	        handleInput: _react2.default.PropTypes.func
+	    },
+
+	    handleKeyPress: function handleKeyPress(e) {
+	        var newTwitterUser = this.input.value;
+	        console.log('Handling the input');
+
+	        if (e.charCode === _keyCodes.KEY_ENTER && newTwitterUser !== '') {
+	            this.props.handleInput(newTwitterUser);
+	            this.input.value = '';
+	        }
+	    },
 	    render: function render() {
 	        var _this = this;
 
@@ -19732,33 +19815,15 @@
 	            'div',
 	            { className: 'twitter-user-input' },
 	            _react2.default.createElement('input', { type: 'text',
+	                id: 'fixed-header-drawer-exp',
+	                className: 'mdl-textfield__input',
 	                ref: function ref(c) {
 	                    return _this.input = c;
 	                },
-	                onKeyPress: function onKeyPress(e) {
-	                    return e.charCode === _keyCodes.KEY_ENTER ? _this.props.handleInput(_this.input.value) : null;
-	                } }),
-	            _react2.default.createElement(
-	                'button',
-	                { onClick: function onClick() {
-	                        _this.props.handleInput(_this.input.value);
-	                    } },
-	                'Find User'
-	            )
+	                onKeyDown: this.handleKeyPress })
 	        );
 	    }
 	});
-
-/***/ },
-/* 161 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var KEY_ENTER = exports.KEY_ENTER = 13;
 
 /***/ },
 /* 162 */
@@ -19787,6 +19852,11 @@
 	        twitterUser: _react2.default.PropTypes.string
 	    },
 
+	    getInitialState: function getInitialState() {
+	        return {
+	            feedItems: []
+	        };
+	    },
 	    componentDidUpdate: function componentDidUpdate(prevProps) {
 	        if (this.props.twitterUser !== prevProps.twitterUser) {
 	            _jquery2.default.ajax({
@@ -19798,9 +19868,16 @@
 	    },
 	    handleNewTwitterFeed: function handleNewTwitterFeed(data) {
 	        var data = (0, _jquery2.default)(data);
-	        console.log(data);
+	        data.find("item").each(function () {
+	            var $this = (0, _jquery2.default)(this),
+	                item = {
+	                creator: $this.find("creator").text()
+
+	            };
+	        });
 	    },
 	    render: function render() {
+
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'feed' },
@@ -29645,6 +29722,17 @@
 	return jQuery;
 	}));
 
+
+/***/ },
+/* 164 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var KEY_ENTER = exports.KEY_ENTER = 13;
 
 /***/ }
 /******/ ]);
