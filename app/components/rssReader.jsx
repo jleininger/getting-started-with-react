@@ -11,7 +11,7 @@ export default React.createClass({
     },
     
     handleNewTwitterUser(user) {
-        this.setState({ twitterUser: user });    
+        this.setState({ twitterUser: user }); 
     },
     
     render() {

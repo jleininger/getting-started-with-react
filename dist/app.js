@@ -19679,7 +19679,7 @@
 
 	var _header2 = _interopRequireDefault(_header);
 
-	var _feedStream = __webpack_require__(162);
+	var _feedStream = __webpack_require__(163);
 
 	var _feedStream2 = _interopRequireDefault(_feedStream);
 
@@ -19788,7 +19788,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _keyCodes = __webpack_require__(164);
+	var _jquery = __webpack_require__(164);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _keyCodes = __webpack_require__(162);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19799,15 +19803,17 @@
 	        handleInput: _react2.default.PropTypes.func
 	    },
 
-	    handleKeyPress: function handleKeyPress(e) {
-	        var newTwitterUser = this.input.value;
-	        console.log('Handling the input');
-
-	        if (e.charCode === _keyCodes.KEY_ENTER && newTwitterUser !== '') {
-	            this.props.handleInput(newTwitterUser);
+	    handleKeyDown: function handleKeyDown(e) {
+	        if (e.keyCode === _keyCodes.KEY_ENTER) {
+	            this.props.handleInput(this.input.value);
 	            this.input.value = '';
 	        }
 	    },
+
+	    componentDidMount: function componentDidMount() {
+	        (0, _jquery2.default)(document.body).on('keydown', this.handleKeyDown);
+	    },
+
 	    render: function render() {
 	        var _this = this;
 
@@ -19819,14 +19825,24 @@
 	                className: 'mdl-textfield__input',
 	                ref: function ref(c) {
 	                    return _this.input = c;
-	                },
-	                onKeyDown: this.handleKeyPress })
+	                } })
 	        );
 	    }
 	});
 
 /***/ },
 /* 162 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var KEY_ENTER = exports.KEY_ENTER = 13;
+
+/***/ },
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19839,9 +19855,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _jquery = __webpack_require__(163);
+	var _jquery = __webpack_require__(164);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _feedCard = __webpack_require__(165);
+
+	var _feedCard2 = _interopRequireDefault(_feedCard);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19867,27 +19887,39 @@
 	        }
 	    },
 	    handleNewTwitterFeed: function handleNewTwitterFeed(data) {
-	        var data = (0, _jquery2.default)(data);
+	        var data = (0, _jquery2.default)(data),
+	            items = [];
 	        data.find("item").each(function () {
-	            var $this = (0, _jquery2.default)(this),
-	                item = {
-	                creator: $this.find("creator").text()
-
-	            };
+	            var itemData = (0, _jquery2.default)(this);
+	            items.push({
+	                title: itemData.find("title").text(),
+	                creator: itemData.find("creator").text(),
+	                pubDate: itemData.find("pubDate").text(),
+	                link: itemData.find("link").text()
+	            });
 	        });
+
+	        this.setState({ feedItems: items });
 	    },
 	    render: function render() {
-
+	        var feedCards = this.state.feedItems.map(function (item, i) {
+	            return _react2.default.createElement(_feedCard2.default, { key: i,
+	                title: item.title,
+	                creator: item.creator,
+	                pubDate: item.pubDate,
+	                link: item.link,
+	                imageUrl: 'nothing' });
+	        });
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'feed' },
-	            _react2.default.createElement('header', null)
+	            feedCards
 	        );
 	    }
 	});
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -29724,15 +29756,84 @@
 
 
 /***/ },
-/* 164 */
-/***/ function(module, exports) {
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
-	var KEY_ENTER = exports.KEY_ENTER = 13;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FeedCard = function FeedCard(_ref) {
+	    var title = _ref.title;
+	    var creator = _ref.creator;
+	    var description = _ref.description;
+	    var imageUrl = _ref.imageUrl;
+	    var pubDate = _ref.pubDate;
+	    var link = _ref.link;
+	    return _react2.default.createElement(
+	        "div",
+	        { className: "twit-card-wide mdl-card mdl-shadow--2dp",
+	            style: styles.card },
+	        _react2.default.createElement(
+	            "div",
+	            { className: "mdl-card__title" },
+	            _react2.default.createElement(
+	                "h2",
+	                { className: "mdl-card__title-text" },
+	                title
+	            )
+	        ),
+	        _react2.default.createElement(
+	            "div",
+	            { className: "mdl-card__supporting-text" },
+	            description,
+	            creator,
+	            " ",
+	            _react2.default.createElement("br", null),
+	            pubDate
+	        ),
+	        _react2.default.createElement(
+	            "div",
+	            { className: "mdl-card__actions mdl-card--border" },
+	            _react2.default.createElement(
+	                "a",
+	                { className: "mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect",
+	                    href: link },
+	                "View Original Post"
+	            )
+	        ),
+	        _react2.default.createElement(
+	            "div",
+	            { className: "mdl-card__menu" },
+	            _react2.default.createElement(
+	                "button",
+	                { className: "mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" },
+	                _react2.default.createElement(
+	                    "i",
+	                    { className: "material-icons" },
+	                    "share"
+	                )
+	            )
+	        )
+	    );
+	};
+
+	var styles = {
+	    card: {
+	        width: 512,
+	        margin: '10px auto'
+	    }
+	};
+
+	exports.default = FeedCard;
 
 /***/ }
 /******/ ]);

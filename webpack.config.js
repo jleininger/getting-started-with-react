@@ -2,7 +2,7 @@ module.exports = {
   context: __dirname + "/app",
   entry: {
     javascript: './app.js',
-    html: './index.html'  
+    html: './index.html'
   },
 
   output: {

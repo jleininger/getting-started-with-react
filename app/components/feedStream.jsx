@@ -1,5 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
+import FeedCard from './feedCard.jsx';
 
 export default React.createClass({
     propTypes: {
@@ -23,21 +24,33 @@ export default React.createClass({
     },
     
     handleNewTwitterFeed(data) {
-        var data = $(data);
+        var data = $(data),
+            items = [];
         data.find("item").each(function() {
-            var $this = $(this),
-            item = {
-                creator: $this.find("creator").text(),
-                    
-            };
-        });    	        
+            var itemData = $(this);
+            items.push({
+                title: itemData.find("title").text(),
+                creator: itemData.find("creator").text(),
+                pubDate: itemData.find("pubDate").text(),
+                link: itemData.find("link").text()
+            });
+        });
+        
+        this.setState({ feedItems: items });        
     },
     
     render() {
-        
+        const feedCards = this.state.feedItems.map((item, i) => {
+            return <FeedCard key={i}
+                             title={item.title}
+                             creator={item.creator}
+                             pubDate={item.pubDate}
+                             link={item.link}
+                             imageUrl={'nothing'} />
+        });
         return (
             <div className="feed">
-                <header>{}</header>
+                {feedCards}
             </div> 
         );
     }  
