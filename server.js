@@ -12,6 +12,7 @@ app.get('/twitterfeed/:username', function(req, res) {
     var rssReq = https.get('https://twitrss.me/twitter_user_to_rss/?user=' + req.params.username, 
         function(rssRes) {
             var xml = '';
+            console.log('Fetching RSS...');
             rssRes.on('data', function(chunk) {
                 xml += chunk;    
             });
