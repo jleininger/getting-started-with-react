@@ -9,7 +9,6 @@ var TwitterUserInput = React.createClass({
     
     handleKeyDown: function(e) {
         if(e.keyCode === KEY_ENTER) {
-            //TODO: There is something broken here, we are unable to call this function
             this.props.handleInput(this.input.value);
             this.input.value = '';
         }
@@ -17,8 +16,6 @@ var TwitterUserInput = React.createClass({
     
     componentDidMount: function() {
         $(document.body).on('keydown', this.handleKeyDown);
-        //TODO: It would be nice to unregister this event listener when/if this component gets removed.
-        //We just need to find a food place to put it.
     },
     
     render: function() {

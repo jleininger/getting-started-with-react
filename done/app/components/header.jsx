@@ -1,7 +1,7 @@
 import React from 'react';
 import UserInput from './twitterUserInput.jsx';
 
-const Header = ({ title }) => (
+const Header = ({ title, handleInput }) => (
 	<header className="mdl-layout__header">
         <div className="mdl-layout__header-row">
             <span className="mdl-layout-title">{title}</span>
@@ -13,7 +13,7 @@ const Header = ({ title }) => (
                 <i className="material-icons">search</i>
                 </label>
                 <div className="mdl-textfield__expandable-holder">
-                    <UserInput />
+                    <UserInput handleInput={handleInput}/>
                 </div>
             </div>
         </div>

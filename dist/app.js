@@ -19679,7 +19679,7 @@
 
 	var _header2 = _interopRequireDefault(_header);
 
-	var _feedStream = __webpack_require__(163);
+	var _feedStream = __webpack_require__(164);
 
 	var _feedStream2 = _interopRequireDefault(_feedStream);
 
@@ -19694,7 +19694,8 @@
 	        };
 	    },
 	    handleNewTwitterUser: function handleNewTwitterUser(user) {
-	        this.setState({ twitterUser: user });
+	        //TODO: Here we need to figure out how to tell our feed component what Twitter User's posts
+	        //we want to see.
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -19707,12 +19708,27 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'page-content' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { style: styles.pageHeader },
+	                        _react2.default.createElement(
+	                            'h2',
+	                            null,
+	                            this.state.twitterUser ? '@' + this.state.twitterUser : ''
+	                        )
+	                    ),
 	                    _react2.default.createElement(_feedStream2.default, { twitterUser: this.state.twitterUser })
 	                )
 	            )
 	        );
 	    }
 	});
+
+	var styles = {
+	    pageHeader: {
+	        textAlign: 'center'
+	    }
+	};
 
 /***/ },
 /* 160 */
@@ -19736,7 +19752,6 @@
 
 	var Header = function Header(_ref) {
 	    var title = _ref.title;
-	    var handleInput = _ref.handleInput;
 	    return _react2.default.createElement(
 	        'header',
 	        { className: 'mdl-layout__header' },
@@ -19765,7 +19780,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'mdl-textfield__expandable-holder' },
-	                    _react2.default.createElement(_twitterUserInput2.default, { handleInput: handleInput })
+	                    _react2.default.createElement(_twitterUserInput2.default, null)
 	                )
 	            )
 	        )
@@ -19788,16 +19803,16 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _jquery = __webpack_require__(164);
+	var _jquery = __webpack_require__(162);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _keyCodes = __webpack_require__(162);
+	var _keyCodes = __webpack_require__(163);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _react2.default.createClass({
-	    displayName: 'twitterUserInput',
+	var TwitterUserInput = _react2.default.createClass({
+	    displayName: 'TwitterUserInput',
 
 	    propTypes: {
 	        handleInput: _react2.default.PropTypes.func
@@ -19805,6 +19820,7 @@
 
 	    handleKeyDown: function handleKeyDown(e) {
 	        if (e.keyCode === _keyCodes.KEY_ENTER) {
+	            //TODO: There is something broken here, we are unable to call this function
 	            this.props.handleInput(this.input.value);
 	            this.input.value = '';
 	        }
@@ -19812,6 +19828,8 @@
 
 	    componentDidMount: function componentDidMount() {
 	        (0, _jquery2.default)(document.body).on('keydown', this.handleKeyDown);
+	        //TODO: It would be nice to unregister this event listener when/if this component gets removed.
+	        //We just need to find a food place to put it.
 	    },
 
 	    render: function render() {
@@ -19830,96 +19848,10 @@
 	    }
 	});
 
+	exports.default = TwitterUserInput;
+
 /***/ },
 /* 162 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var KEY_ENTER = exports.KEY_ENTER = 13;
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _jquery = __webpack_require__(164);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _feedCard = __webpack_require__(165);
-
-	var _feedCard2 = _interopRequireDefault(_feedCard);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _react2.default.createClass({
-	    displayName: 'feedStream',
-
-	    propTypes: {
-	        twitterUser: _react2.default.PropTypes.string
-	    },
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            feedItems: []
-	        };
-	    },
-	    componentDidUpdate: function componentDidUpdate(prevProps) {
-	        if (this.props.twitterUser !== prevProps.twitterUser) {
-	            _jquery2.default.ajax({
-	                url: '/twitterfeed/' + this.props.twitterUser,
-	                dataType: 'xml',
-	                success: this.handleNewTwitterFeed
-	            });
-	        }
-	    },
-	    handleNewTwitterFeed: function handleNewTwitterFeed(data) {
-	        var data = (0, _jquery2.default)(data),
-	            items = [];
-	        data.find("item").each(function () {
-	            var itemData = (0, _jquery2.default)(this);
-	            items.push({
-	                title: itemData.find("title").text(),
-	                creator: itemData.find("creator").text(),
-	                pubDate: itemData.find("pubDate").text(),
-	                link: itemData.find("link").text()
-	            });
-	        });
-
-	        this.setState({ feedItems: items });
-	    },
-	    render: function render() {
-	        var feedCards = this.state.feedItems.map(function (item, i) {
-	            return _react2.default.createElement(_feedCard2.default, { key: i,
-	                title: item.title,
-	                creator: item.creator,
-	                pubDate: item.pubDate,
-	                link: item.link,
-	                imageUrl: 'nothing' });
-	        });
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'feed' },
-	            feedCards
-	        );
-	    }
-	});
-
-/***/ },
-/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -29756,6 +29688,106 @@
 
 
 /***/ },
+/* 163 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var KEY_ENTER = exports.KEY_ENTER = 13;
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _jquery = __webpack_require__(162);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _feedCard = __webpack_require__(165);
+
+	var _feedCard2 = _interopRequireDefault(_feedCard);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	    displayName: 'feedStream',
+
+	    propTypes: {
+	        twitterUser: _react2.default.PropTypes.string
+	    },
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            feedItems: [],
+	            loading: false
+	        };
+	    },
+	    componentDidUpdate: function componentDidUpdate(prevProps) {
+	        if (this.props.twitterUser !== prevProps.twitterUser) {
+	            this.setState({ loading: true });
+	            _jquery2.default.ajax({
+	                url: '/twitterfeed/' + this.props.twitterUser,
+	                dataType: 'xml',
+	                success: this.handleNewTwitterFeed
+	            });
+	        }
+	    },
+	    handleNewTwitterFeed: function handleNewTwitterFeed(data) {
+	        var data = (0, _jquery2.default)(data),
+	            items = [];
+	        data.find("item").each(function () {
+	            var itemData = (0, _jquery2.default)(this);
+	            items.push({
+	                title: itemData.find("title").text(),
+	                creator: itemData.find("creator").text(),
+	                pubDate: itemData.find("pubDate").text(),
+	                link: itemData.find("link").text()
+	            });
+	        });
+
+	        this.setState({
+	            feedItems: items,
+	            loading: false
+	        });
+	    },
+	    render: function render() {
+	        var feedCards = this.state.feedItems.map(function (item, i) {
+	            //TODO: Here we need to map the items that we have in state.feedItems
+	            //to React components that we can display on the page.
+	        });
+	        var loadingMsg = _react2.default.createElement(
+	            'h4',
+	            { style: { textAlign: 'center', marginTop: 50 } },
+	            'Fetching Twitter Feed...'
+	        );
+	        var nothingToDisplayMsg = _react2.default.createElement(
+	            'h4',
+	            { style: { textAlign: 'center', marginTop: 50 } },
+	            'Sorry, nothing to show here :('
+	        );
+
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'feed' },
+	            this.state.loading ? loadingMsg : feedCards.length ? feedCards : nothingToDisplayMsg
+	        );
+	    }
+	});
+
+/***/ },
 /* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -29775,7 +29807,6 @@
 	    var title = _ref.title;
 	    var creator = _ref.creator;
 	    var description = _ref.description;
-	    var imageUrl = _ref.imageUrl;
 	    var pubDate = _ref.pubDate;
 	    var link = _ref.link;
 	    return _react2.default.createElement(
@@ -29806,21 +29837,8 @@
 	            _react2.default.createElement(
 	                "a",
 	                { className: "mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect",
-	                    href: link },
+	                    href: link, target: "_blank" },
 	                "View Original Post"
-	            )
-	        ),
-	        _react2.default.createElement(
-	            "div",
-	            { className: "mdl-card__menu" },
-	            _react2.default.createElement(
-	                "button",
-	                { className: "mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" },
-	                _react2.default.createElement(
-	                    "i",
-	                    { className: "material-icons" },
-	                    "share"
-	                )
 	            )
 	        )
 	    );
@@ -29829,7 +29847,7 @@
 	var styles = {
 	    card: {
 	        width: 512,
-	        margin: '10px auto'
+	        margin: '15px auto'
 	    }
 	};
 

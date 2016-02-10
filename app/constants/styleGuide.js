@@ -1,0 +1,1 @@
+export const CENTER = '0px auto';

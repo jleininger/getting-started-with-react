@@ -46,8 +46,11 @@ export default React.createClass({
     
     render() {
         const feedCards = this.state.feedItems.map((item, i) => {
-            //TODO: Here we need to map the items that we have in state.feedItems
-            //to React components that we can display on the page.
+            return <FeedCard key={i}
+                             title={item.title}
+                             creator={item.creator}
+                             pubDate={item.pubDate}
+                             link={item.link} />
         });
         const loadingMsg = <h4 style={{textAlign: 'center', marginTop: 50}}>Fetching Twitter Feed...</h4>;
         const nothingToDisplayMsg = <h4 style={{textAlign: 'center', marginTop: 50}}>Sorry, nothing to show here :(</h4>

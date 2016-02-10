@@ -11,8 +11,7 @@ export default React.createClass({
     },
     
     handleNewTwitterUser(user) {
-        //TODO: Here we need to figure out how to tell our feed component what Twitter User's posts
-        //we want to see.
+        this.setState({ twitterUser: user });
     },
     
     render() {
